@@ -15,6 +15,7 @@ import logging
 import packbits
 from PIL import Image
 import io
+from io import BytesIO
 
 from brother_ql.models import ModelsManager
 from .devicedependent import models, \
@@ -29,10 +30,6 @@ from .devicedependent import models, \
 
 from . import BrotherQLError, BrotherQLUnsupportedCmd, BrotherQLUnknownModel, BrotherQLRasterError
 
-try:
-    from io import BytesIO
-except: # Py2
-    from cStringIO import StringIO as BytesIO
 
 logger = logging.getLogger(__name__)
 

@@ -101,3 +101,12 @@ def send(instructions, printer_identifier=None, backend_identifier=None, blockin
         logger.info("Printing was successful. Waiting for the next job.")
 
     return status
+
+def checkPrinterAvailable(printer_identifier=None, backend_identifier=None):
+    try:
+        res = send(b'', printer_identifier=printer_identifier, backend_identifier=backend_identifier, blocking=False)
+        # assert res['ready_for_next_job'], "Printer not ready for next job."
+    except Exception as e:
+        return False
+    else:
+        return True

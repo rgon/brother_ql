@@ -1,22 +1,11 @@
-[project]
-name = "brother_ql-inventree"
-version = "1.1"
+[tool.poetry]
+name = "brother-ql"
+version = "1.2"
 description = "Python package to talk to Brother QL label printers"
+authors = ["Philipp Klaus <philipp.l.klaus@web.de>"]
+homepage = "https://github.com/pklaus/brother_ql-inventree"
+license = "GPL"
 readme = "README.md"
-authors = [
-    { name = "Philipp Klaus", email = "philipp.l.klaus@web.de" }
-]
-license = {text = "GPL"}
-dependencies = [
-    "click",
-    "future",
-    "packbits",
-    "pillow>=10.0.0",
-    "pyusb",
-    "attrs",
-    "typing;python_version<'3.5'",
-    "enum34;python_version<'3.4'",
-]
 keywords = [
     "Brother",
     "QL-500",
@@ -46,7 +35,19 @@ classifiers = [
     "Topic :: System :: Hardware :: Hardware Drivers",
 ]
 
-[project.scripts]
+[tool.poetry.dependencies]
+python = "^3.11"
+click = "^8.1.7"
+packbits = "0.6"
+pillow = "^10.0.0"
+pyusb = "^1.2.1"
+attrs = "^23.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
 brother_ql = "brother_ql.cli:cli"
 brother_ql_analyse = "brother_ql.brother_ql_analyse:main"
 brother_ql_create = "brother_ql.brother_ql_create:main"
@@ -54,5 +55,3 @@ brother_ql_print = "brother_ql.brother_ql_print:main"
 brother_ql_debug = "brother_ql.brother_ql_debug:main"
 brother_ql_info = "brother_ql.brother_ql_info:main"
 
-[project.urls]
-repository = "https://github.com/pklaus/brother_ql-inventree"

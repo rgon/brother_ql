@@ -1,6 +1,7 @@
 
-from attr import attrs, attrib
 from typing import List, Tuple
+from dataclasses import dataclass, field
+
 from enum import IntEnum
 
 import copy
@@ -32,7 +33,7 @@ class Color(IntEnum):
     #: The label can be printed in black, white & red.
     BLACK_RED_WHITE = 1
 
-@attrs
+@dataclass
 class Label(object):
     """
     This class represents a label. All specifics of a certain label
@@ -40,27 +41,27 @@ class Label(object):
     label choosen, should be contained in this class.
     """
     #: A string identifier given to each label that can be selected. Eg. '29'.
-    identifier = attrib(type=str)
+    identifier:str
     #: The tape size of a single label (width, lenght) in mm. For endless labels, the length is 0 by definition.
-    tape_size = attrib(type=Tuple[int, int])
+    tape_size:Tuple[int, int]
     #: The type of label
-    form_factor = attrib(type=FormFactor)
+    form_factor:FormFactor
     #: The total area (width, length) of the label in dots (@300dpi).
-    dots_total = attrib(type=Tuple[int, int])
+    dots_total:Tuple[int, int]
     #: The printable area (width, length) of the label in dots (@300dpi).
-    dots_printable = attrib(type=Tuple[int, int])
+    dots_printable:Tuple[int, int]
     #: The required offset from the right side of the label in dots to obtain a centered printout.
-    offset_r = attrib(type=int)
+    offset_r:int
     #: An additional amount of feeding when printing the label.
     #: This is non-zero for some smaller label sizes and for endless labels.
-    feed_margin = attrib(type=int, default=0)
+    feed_margin:int = 0
     #: If a label can only be printed with certain label printers, this member variable lists the allowed ones.
     #: Otherwise it's an empty list.
-    restricted_to_models = attrib(type=List[str], factory=list)
+    restricted_to_models:List[str] = field(default_factory=list)
     #: Some labels allow printing in red, most don't.
-    color = attrib(type=Color, default=Color.BLACK_WHITE)
+    color:Color = Color.BLACK_WHITE
 
-    def works_with_model(self, model): # type: bool
+    def works_with_model(self, model) -> bool:
         """
         Method to determine if certain label can be printed by the specified printer model.
         """
@@ -68,7 +69,7 @@ class Label(object):
         else: return True
 
     @property
-    def name(self): # type: str
+    def name(self) -> str:
         out = ""
         if 'x' in self.identifier:
             out = '{0}mm x {1}mm die-cut'.format(*self.tape_size)

@@ -1,45 +1,45 @@
-from attr import attrs, attrib
 from typing import Tuple
+from dataclasses import dataclass
 
 import copy
 
 from brother_ql.helpers import ElementsManager
 
-@attrs
+@dataclass
 class Model(object):
     """
     This class represents a printer model. All specifics of a certain model
     and the opcodes it supports should be contained in this class.
     """
     #: A string identifier given to each model implemented. Eg. 'QL-500'.
-    identifier = attrib(type=str)
+    identifier:str
     #: Minimum and maximum number of rows or 'dots' that can be printed.
     #: Together with the dpi this gives the minimum and maximum length
     #: for continuous tape printing.
-    min_max_length_dots = attrib(type=Tuple[int, int])
+    min_max_length_dots:Tuple[int, int]
     #: The minimum and maximum amount of feeding a label
-    min_max_feed = attrib(type=Tuple[int, int], default=(35, 1500))
-    number_bytes_per_row = attrib(type=int, default=90)
+    min_max_feed:Tuple[int, int] = (35, 1500)
+    number_bytes_per_row:int = 90
     #: The required additional offset from the right side
-    additional_offset_r = attrib(type=int, default=0)
+    additional_offset_r:int = 0
     #: Support for the 'mode setting' opcode
-    mode_setting = attrib(type=bool, default=True)
+    mode_setting:bool = True
     #: Model has a cutting blade to automatically cut labels
-    cutting = attrib(type=bool, default=True)
+    cutting:bool = True
     #: Model has support for the 'expanded mode' opcode.
     #: (So far, all models that have cutting support do).
-    expanded_mode = attrib(type=bool, default=True)
+    expanded_mode:bool = True
     #: Model has support for compressing the transmitted raster data.
     #: Some models with only USB connectivity don't support compression.
-    compression = attrib(type=bool, default=True)
+    compression:bool = True
     #: Support for two color printing (black/red/white)
     #: available only on some newer models.
-    two_color = attrib(type=bool, default=False)
+    two_color:bool = False
     #: Number of NULL bytes needed for the invalidate command.
-    num_invalidate_bytes = attrib(type=int, default=200)
+    num_invalidate_bytes:int = 200
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self.identifier
 
 ALL_MODELS = [

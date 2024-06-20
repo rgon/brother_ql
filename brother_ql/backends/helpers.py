@@ -23,7 +23,7 @@ def discover(backend_identifier='linux_kernel'):
     available_devices = list_available_devices()
     return available_devices
 
-def send(instructions, printer_identifier=None, backend_identifier=None, blocking=True, timeout=10):
+def send(instructions, printer_identifier=None, backend_identifier=None, blocking=True, timeout=10, is_print_command=True):
     """
     Send instruction bytes to a printer.
 
@@ -91,14 +91,15 @@ def send(instructions, printer_identifier=None, backend_identifier=None, blockin
         if status['did_print'] and status['ready_for_next_job']:
             break
 
-    if not status['did_print']:
-        logger.warning("'printing completed' status not received.")
-    if not status['ready_for_next_job']:
-        logger.warning("'waiting to receive' status not received.")
-    if (not status['did_print']) or (not status['ready_for_next_job']):
-        logger.warning('Printing potentially not successful?')
-    if status['did_print'] and status['ready_for_next_job']:
-        logger.info("Printing was successful. Waiting for the next job.")
+    if (is_print_command):
+        if not status['did_print']:
+            logger.warning("'printing completed' status not received.")
+        if not status['ready_for_next_job']:
+            logger.warning("'waiting to receive' status not received.")
+        if (not status['did_print']) or (not status['ready_for_next_job']):
+            logger.warning('Printing potentially not successful?')
+        if status['did_print'] and status['ready_for_next_job']:
+            logger.info("Printing was successful. Waiting for the next job.")
 
     return status
 
@@ -113,7 +114,7 @@ def checkPrinterStatus(printer_identifier=None, backend_identifier=None) -> list
         # 1B H + 69 H + 53 H
         command = b'\x1b\x69\x53'
         res = send(command, printer_identifier=printer_identifier, backend_identifier=backend_identifier, blocking=True,
-                   timeout=1)
+                   timeout=1, is_print_command=False)
         # res = send(b'', printer_identifier=printer_identifier, backend_identifier=backend_identifier, blocking=False)
         # assert res['ready_for_next_job'], "Printer not ready for next job."
         

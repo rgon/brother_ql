@@ -2,6 +2,7 @@
 
 import sys, argparse, logging
 
+from . import BrotherQLUnknownModel
 from brother_ql.raster import BrotherQLRaster
 from brother_ql.conversion import convert
 from brother_ql.devicedependent import label_type_specs

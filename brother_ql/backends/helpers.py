@@ -23,7 +23,7 @@ def discover(backend_identifier='linux_kernel'):
     available_devices = list_available_devices()
     return available_devices
 
-def send(instructions, printer_identifier=None, backend_identifier=None, blocking=True):
+def send(instructions, printer_identifier=None, backend_identifier=None, blocking=True, timeout=10):
     """
     Send instruction bytes to a printer.
 
@@ -67,7 +67,7 @@ def send(instructions, printer_identifier=None, backend_identifier=None, blockin
         """ No need to wait for completion. The network backend doesn't support readback. """
         return status
 
-    while time.time() - start < 10:
+    while time.time() - start < timeout:
         data = printer.read()
         if not data:
             time.sleep(0.005)
@@ -102,11 +102,27 @@ def send(instructions, printer_identifier=None, backend_identifier=None, blockin
 
     return status
 
-def checkPrinterAvailable(printer_identifier=None, backend_identifier=None):
+def checkPrinterStatus(printer_identifier=None, backend_identifier=None) -> list[str]:
+    '''
+    returns list of errors
+    '''
     try:
-        res = send(b'', printer_identifier=printer_identifier, backend_identifier=backend_identifier, blocking=False)
+        # https://download.brother.com/welcome/docp000678/cv_qlseries_eng_raster_600.pdf
+        # Send status request to printer: Page 19. 5. Command Details
+        # ESC + I + S 
+        # 1B H + 69 H + 53 H
+        command = b'\x1b\x69\x53'
+        res = send(command, printer_identifier=printer_identifier, backend_identifier=backend_identifier, blocking=True,
+                   timeout=1)
+        # res = send(b'', printer_identifier=printer_identifier, backend_identifier=backend_identifier, blocking=False)
         # assert res['ready_for_next_job'], "Printer not ready for next job."
+        
+        # print(res['errors'] if res['errors'] else res['printer_state'])
     except Exception as e:
-        return False
+        return ['Cannot connect to printer']
     else:
-        return True
+        errors = []
+        if res['printer_state'] and 'errors' in res['printer_state']:
+            errors = res['printer_state']['errors']
+        
+        return errors
